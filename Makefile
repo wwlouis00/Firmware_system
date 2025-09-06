@@ -1,25 +1,33 @@
-# 編譯器
-CC = gcc
-CFLAGS = -Wall -g
+# 編譯器與參數
+CC       := gcc
+CFLAGS   := -Wall -g
 
-TOPDIR = ${shell pwd | sed -e 's/ /\\ /g'}
-export TOPDIR
+# 專案目錄
+SRC_DIRS := . test       # 自動掃描這些目錄裡的 .c 檔
+INC_DIRS := . test       # 標頭檔搜尋路徑
 
-# 檔案
-TARGET = my_program
-OBJS = main.o math_utils.o
+# 自動抓取來源檔與物件檔
+SRCS     := $(foreach d,$(SRC_DIRS),$(wildcard $(d)/*.c))
+OBJS     := $(patsubst %.c,%.o,$(SRCS))
 
-# 規則
+# 輸出目標
+TARGET   := my_program
+
+# 編譯參數（加上 -I 旗標）
+CPPFLAGS := $(addprefix -I,$(INC_DIRS))
+
+.PHONY: all clean
+
+# 最終目標
+all: $(TARGET)
+
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.c math_utils.h
-	$(CC) $(CFLAGS) -c main.c
-
-math_utils.o: math_utils.c math_utils.h
-	$(CC) $(CFLAGS) -c math_utils.c
+# 一般規則：.c → .o
+%.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 # 清理
 clean:
-	rm -f $(TARGET) $(OBJS)
-# 	clean: xclean clobber
+	$(RM) $(TARGET) $(OBJS)

@@ -5,6 +5,7 @@
 
 int main(void) {
 
+    
     int a = 5, b = 3;
     printf("a + b = %d\n", add(a, b));
     printf("a * b = %d\n", multiply(a, b));
