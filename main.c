@@ -26,7 +26,7 @@ void Test_ModuleName(void)
 int main(void) {
 
     
-    int a = 5, b = 3;
+    int a = 12, b = 18;
     printf("a + b = %d\n", add(a, b));
     printf("a * b = %d\n", multiply(a, b));
     Test_ModuleName();

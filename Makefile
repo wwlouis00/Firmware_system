@@ -1,3 +1,8 @@
+TOPDIR = ${shell pwd | sed -e 's/ /\\ /g'}
+export TOPDIR
+
+target ?= main_firmware
+export target
 # 編譯器與參數
 CC       := gcc
 CFLAGS   := -Wall -g
@@ -11,17 +16,17 @@ SRCS     := $(foreach d,$(SRC_DIRS),$(wildcard $(d)/*.c))
 OBJS     := $(patsubst %.c,%.o,$(SRCS))
 
 # 輸出目標
-TARGET   := my_program
+#TARGET   := my_program
 
 # 編譯參數（加上 -I 旗標）
 CPPFLAGS := $(addprefix -I,$(INC_DIRS))
 
-.PHONY: all clean
+.PHONY: all
 
 # 最終目標
-all: $(TARGET)
+all: $(target)
 
-$(TARGET): $(OBJS)
+$(target): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 # 一般規則：.c → .o
@@ -30,4 +35,4 @@ $(TARGET): $(OBJS)
 
 # 清理
 clean:
-	$(RM) $(TARGET) $(OBJS)
+	$(RM) $(target) $(OBJS)
