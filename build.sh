@@ -5,4 +5,4 @@ export PATH=/opt/arm/gcc-linaro-aarch64-none-elf-4.9-2014.09_linux/bin/:$PATH
 
 make clean
 
-make
+make target=ModuleTest -j

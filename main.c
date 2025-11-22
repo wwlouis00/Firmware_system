@@ -2,90 +2,66 @@
  * @file      main.c
  * @author    Louis Wang
  * @date      2025-11-21
- * @brief     Entry point for math utility test application.
+ * @brief     Interactive command-based test application.
  */
 
-/*-----------------------------------------------------------------------------*/
-/* Include Header Files                                                        */
-/*-----------------------------------------------------------------------------*/
+/* -------------------------------------------------------------------------- */
+/*                              Include Files                                  */
+/* -------------------------------------------------------------------------- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "math_utils.h"
 #include "version.h"
 
 /* -------------------------------------------------------------------------- */
-/*                               Type Definitions                              */
+/*                                Definitions                                  */
 /* -------------------------------------------------------------------------- */
 
-typedef enum _TEST_ITEMS{
-    TEST_MODULE_NAME = 0,
-    TEST_PRINT,
-    
-    TEST_ITEMS_MAX,
-} test_item_t;
+#define MAX_CMD_LEN     64
+#define MAX_ARGS        4
+#define MAX_NAME_LEN    16
 
 /* -------------------------------------------------------------------------- */
-/*                             Function Prototypes                             */
+/*                              Type Definitions                               */
 /* -------------------------------------------------------------------------- */
 
-static void test_module_name(void);
-static void cmd_test(int argc, char **argv);
-static void cmd_print(int argc, char **argv);
-static void cmd_help(void);
-static void trim_newline(char *s);
-static int parse_args(char *input, char *argv[]);
-static void to_upper(char *s);
-
-
-#define MAX_COMBINE_NUM     3
-#define MAX_NAME_LEN        16
-#define MAX_INPUT_LEN       128
-#define MAX_ARGC            8
-
+typedef void (*cmd_handler_t)(int argc, char *argv[]);
 
 typedef struct {
-    char       test_name[MAX_NAME_LEN];
-    test_item_t items[MAX_COMBINE_NUM];
-} module_command_t;
+    char          name[MAX_NAME_LEN];
+    char          desc[64];
+    cmd_handler_t handler;
+} command_t;
 
+/* -------------------------------------------------------------------------- */
+/*                         Forward Declarations                                */
+/* -------------------------------------------------------------------------- */
 
-/* 示例測試命令表，可根據專案需要擴充 */
-static module_command_t module_test_cmd[] =
+static void cmd_test(int argc, char *argv[]);
+static void cmd_math(int argc, char *argv[]);
+static void cmd_info(int argc, char *argv[]);
+static void cmd_help(int argc, char *argv[]);
+static void cmd_exit(int argc, char *argv[]);
+
+/* -------------------------------------------------------------------------- */
+/*                               Command Table                                 */
+/* -------------------------------------------------------------------------- */
+
+static command_t cmd_table[] =
 {
-    { ".TEST", { TEST_MODULE_NAME, TEST_PRINT, -1 } }
+    { ".TEST", "Run all test modules",          cmd_test },
+    { ".MATH", "Math test: .MATH a b",          cmd_math },
+    { ".INFO", "Print build and version info",  cmd_info },
+    { ".HELP", "Show help message",             cmd_help },
+    { ".EXIT", "Exit program",                  cmd_exit },
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                 CLI TABLE                                   */
-/* -------------------------------------------------------------------------- */
-
-typedef void (*command_func_t)(int argc, char **argv);
-
-typedef struct {
-    const char       *name;
-    command_func_t    handler;
-    const char       *desc;
-} command_entry_t;
-
-static void cmd_exit(int argc, char **argv)
-{
-    printf("Exiting...\n");
-    exit(0);
-}
-
-static const command_entry_t cmd_table[] =
-{
-    { "TEST",  cmd_test,  "Run test routines" },
-    { "PRINT", cmd_print, "Print example data" },
-    { "HELP",  NULL,      "Show command list" },
-    { "EXIT",  cmd_exit,  "Exit program" }
-};
+static const int cmd_count = sizeof(cmd_table) / sizeof(cmd_table[0]);
 
 /* -------------------------------------------------------------------------- */
-/*                               Test Functions                                */
+/*                              Test Functions                                 */
 /* -------------------------------------------------------------------------- */
 
 static void test_module_name(void)
@@ -101,104 +77,75 @@ static void test_module_name(void)
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               CLI Functions                                 */
+/*                             Command Handlers                                */
 /* -------------------------------------------------------------------------- */
 
-static void cmd_test(int argc, char **argv)
+static void cmd_test(int argc, char *argv[])
 {
-    if (argc < 2) {
-        printf("Usage: TEST <MODULE>\n");
-        printf("Example: TEST MODULE\n");
+    printf("Executing test_module_name()...\n");
+    test_module_name();
+}
+
+static void cmd_math(int argc, char *argv[])
+{
+    if (argc < 3) {
+        printf("Usage: .MATH a b\n");
         return;
     }
 
-    to_upper(argv[1]);
+    int a = atoi(argv[1]);
+    int b = atoi(argv[2]);
 
-    if (strcmp(argv[1], "MODULE") == 0) {
-        test_module_name();
-        return;
-    }
-
-    printf("Unknown test: %s\n", argv[1]);
+    printf("add(%d, %d) = %d\n",      a, b, add(a, b));
+    printf("multiply(%d, %d) = %d\n", a, b, multiply(a, b));
 }
 
-static void cmd_print(int argc, char **argv)
+static void cmd_info(int argc, char *argv[])
 {
-    if (argc < 2) {
-        printf("Usage: PRINT <DATA>\n");
-        printf("Example: PRINT A\n");
-        return;
-    }
+    printf("\n[BUILD INFO] %s %s\n", __DATE__, __TIME__);
+    printf("[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
+}
 
-    to_upper(argv[1]);
+static void cmd_help(int argc, char *argv[])
+{
+    printf("\n[AVAILABLE COMMANDS]\n");
 
-    if (strcmp(argv[1], "A") == 0) {
-        printf("A = 12\n");
-    } else if (strcmp(argv[1], "B") == 0) {
-        printf("B = 18\n");
-    } else {
-        printf("Unknown print item: %s\n", argv[1]);
+    for (int i = 0; i < cmd_count; i++) {
+        printf("  %-8s - %s\n", cmd_table[i].name, cmd_table[i].desc);
     }
 }
 
-static void cmd_help(void)
+static int g_exit_flag = 0;
+
+static void cmd_exit(int argc, char *argv[])
 {
-    printf("\nAvailable Commands:\n");
-    for (size_t i = 0; i < sizeof(cmd_table)/sizeof(cmd_table[0]); i++) {
-        printf("  %-6s - %s\n",
-               cmd_table[i].name,
-               cmd_table[i].desc);
-    }
-    printf("\n");
+    printf("Exiting...\n");
+    g_exit_flag = 1;
 }
 
 /* -------------------------------------------------------------------------- */
-/*                           CLI Helper Functions                              */
+/*                           Command Dispatcher                                */
 /* -------------------------------------------------------------------------- */
 
-static void trim_newline(char *s)
+static void process_command(char *input)
 {
-    s[strcspn(s, "\r\n")] = 0;
-}
-
-static int parse_args(char *input, char *argv[])
-{
+    char *argv[MAX_ARGS];
     int argc = 0;
-    char *token = strtok(input, " ");
 
-    while (token != NULL && argc < MAX_ARGC) {
-        argv[argc++] = token;
-        token = strtok(NULL, " ");
+    /* Tokenize input command */
+    char *tok = strtok(input, " ");
+    while (tok && argc < MAX_ARGS) {
+        argv[argc++] = tok;
+        tok = strtok(NULL, " ");
     }
-    return argc;
-}
 
-static void to_upper(char *s)
-{
-    while (*s) {
-        *s = toupper((unsigned char)*s);
-        s++;
+    if (argc == 0) {
+        return;
     }
-}
 
-/* -------------------------------------------------------------------------- */
-/*                              Command Dispatcher                             */
-/* -------------------------------------------------------------------------- */
-
-static void process_command(int argc, char **argv)
-{
-    if (argc == 0) return;
-
-    to_upper(argv[0]);
-
-    for (size_t i = 0; i < sizeof(cmd_table)/sizeof(cmd_table[0]); i++) {
+    /* Check command table */
+    for (int i = 0; i < cmd_count; i++) {
         if (strcmp(argv[0], cmd_table[i].name) == 0) {
-
-            if (strcmp(argv[0], "HELP") == 0) {
-                cmd_help();
-                return;
-            }
-
             cmd_table[i].handler(argc, argv);
             return;
         }
@@ -213,37 +160,34 @@ static void process_command(int argc, char **argv)
 
 int main(void)
 {
-    char input[MAX_INPUT_LEN];
-    char *argv[MAX_ARGC];
-    int argc;
-
-    int a = 12, b = 18;
-    printf("a + b = %d\n", add(a, b));
-    printf("a * b = %d\n", multiply(a, b));
-
-    printf("\n[REGISTERED TEST COMMANDS]\n");
-    printf("  %s\n", module_test_cmd[0].test_name);
+    char input_buf[MAX_CMD_LEN];
 
     printf("\n[BUILD INFO] %s %s\n", __DATE__, __TIME__);
-    printf("[VERSION] MP Ver: %s%03d_V%03d\n",
-           PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
+    printf("[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
 
-    printf("\n===== ENTER COMMAND MODE =====\n");
-    printf("Type HELP to view commands.\n\n");
+    printf("\n=== Command Test System Ready ===\n");
+    printf("Type .HELP for available commands.\n");
 
-    while (1)
-    {
-        printf("> ");
+#ifndef EMBEDDED
+    while (!g_exit_flag) {
 
-        if (!fgets(input, sizeof(input), stdin))
+        printf("\n> ");
+        if (!fgets(input_buf, sizeof(input_buf), stdin)) {
             continue;
+        }
 
-        trim_newline(input);
-        argc = parse_args(input, argv);
+        /* Remove trailing newline */
+        input_buf[strcspn(input_buf, "\n")] = '\0';
 
-        if (argc > 0)
-            process_command(argc, argv);
+        process_command(input_buf);
     }
+#endif
+
+#ifdef EMBEDDED
+    while (1) {
+        /* MCU infinite loop */
+    }
+#endif
 
     return 0;
 }
