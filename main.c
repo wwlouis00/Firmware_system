@@ -14,6 +14,7 @@
 #include <string.h>
 #include "math_utils.h"
 #include "version.h"
+#include "define.h"
 
 /* -------------------------------------------------------------------------- */
 /*                                Definitions                                  */
@@ -44,7 +45,7 @@ static void cmd_math(int argc, char *argv[]);
 static void cmd_info(int argc, char *argv[]);
 static void cmd_help(int argc, char *argv[]);
 static void cmd_exit(int argc, char *argv[]);
-
+void SwitchTest( void );
 /* -------------------------------------------------------------------------- */
 /*                               Command Table                                 */
 /* -------------------------------------------------------------------------- */
@@ -154,13 +155,42 @@ static void process_command(char *input)
     printf("Unknown command: %s\n", argv[0]);
 }
 
+void SwitchTest( void )
+{
+    int i, runTimes = 0, iRtn = TEST_OK;
+    for( i = 0; i < 10000; i++ )
+    {
+        switch( i % 5 )
+        {
+            case 0:
+                runTimes++;
+                break;
+            case 1:
+                runTimes++;
+                break;
+            case 2:
+                runTimes++;
+                break;
+            case 3:
+                runTimes++;
+                break;
+            case 4:
+                runTimes++;
+                break;
+            default:
+                iRtn = TEST_NG;
+                break;
+        }
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   main()                                    */
 /* -------------------------------------------------------------------------- */
 
 int main(void)
 {
-    char input_buf[MAX_CMD_LEN];
+    
 
     printf("\n[BUILD INFO] %s %s\n", __DATE__, __TIME__);
     printf("[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
@@ -168,7 +198,8 @@ int main(void)
     printf("\n=== Command Test System Ready ===\n");
     printf("Type .HELP for available commands.\n");
 
-#ifndef EMBEDDED
+#ifndef EMBEDDED_TEST
+    char input_buf[MAX_CMD_LEN];
     while (!g_exit_flag) {
 
         printf("\n> ");
@@ -184,9 +215,8 @@ int main(void)
 #endif
 
 #ifdef EMBEDDED
-    while (1) {
-        /* MCU infinite loop */
-    }
+    SwitchTest();
+    while (1) ;
 #endif
 
     return 0;

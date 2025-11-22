@@ -6,8 +6,8 @@
 OPDIR = $(shell pwd)
 export TOPDIR
 
-target ?= ModuleTest
-export target
+TARGET ?= ModuleTest
+export TARGET
 
 # ------------------------------------------------------------
 # Build type (default = debug)
@@ -17,31 +17,12 @@ export target
 #   make BUILD=asan
 # ------------------------------------------------------------
 
-BUILD ?= debug
-BUILD_DIR := build/$(BUILD)
-
 # ------------------------------------------------------------
 # Compiler and Flags
 # ------------------------------------------------------------
 CC       := gcc
 CFLAGS   := -Wall -g
 
-
-# Debug build (default)
-ifeq ($(BUILD),debug)
-    CFLAGS := $(CFLAGS_COMMON) -g -O0 -DDEBUG
-endif
-
-# Release build
-ifeq ($(BUILD),release)
-    CFLAGS := $(CFLAGS_COMMON) -O2 -DNDEBUG
-endif
-
-# ASan build (Memory sanitizer)
-ifeq ($(BUILD),asan)
-    CFLAGS := $(CFLAGS_COMMON) -g -O1 -fsanitize=address -fno-omit-frame-pointer -DDEBUG
-    LDFLAGS := -fsanitize=address
-endif
 
 # 專案目錄
 SRC_DIRS := . test       # 自動掃描這些目錄裡的 .c 檔
@@ -58,9 +39,9 @@ CPPFLAGS := $(addprefix -I,$(INC_DIRS))
 .PHONY: all
 
 # 最終目標
-all: $(target)
+all: $(TARGET)
 
-$(target): $(OBJS)
+$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 # 一般規則：.c → .o
@@ -72,4 +53,4 @@ $(target): $(OBJS)
 # ------------------------------------------------------------
 clean:
 	@echo "Cleaning build directory..."
-	$(RM) -r build $(TARGET)
+	$(RM) $(TARGET) $(OBJS)
