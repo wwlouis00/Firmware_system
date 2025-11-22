@@ -198,7 +198,7 @@ int main(void)
     printf("\n=== Command Test System Ready ===\n");
     printf("Type .HELP for available commands.\n");
 
-#ifndef EMBEDDED_TEST
+#if EMBEDDED_TEST
     char input_buf[MAX_CMD_LEN];
     while (!g_exit_flag) {
 
@@ -214,7 +214,7 @@ int main(void)
     }
 #endif
 
-#ifdef EMBEDDED
+#if EMBEDDED
     SwitchTest();
     while (1) ;
 #endif
