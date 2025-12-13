@@ -23,10 +23,14 @@ export TARGET
 CC       := gcc
 CFLAGS   := -Wall -g
 
+TEST_SUB_DIRS := $(patsubst %/,%,$(shell ls -d test/*/ 2>/dev/null))
+
 
 # 專案目錄
-SRC_DIRS := . test       # 自動掃描這些目錄裡的 .c 檔
-INC_DIRS := . test include       # 標頭檔搜尋路徑
+# SRC_DIRS := . test       # 自動掃描這些目錄裡的 .c 檔
+SRC_DIRS := . test $(TEST_SUB_DIRS)
+# INC_DIRS := . test include       # 標頭檔搜尋路徑
+INC_DIRS := . test include $(TEST_SUB_DIRS)
 
 # 自動抓取來源檔與物件檔
 SRCS     := $(foreach d,$(SRC_DIRS),$(wildcard $(d)/*.c))

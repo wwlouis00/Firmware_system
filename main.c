@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "math_utils.h"
+#include "sample.h"
 #include "version.h"
 #include "define.h"
 
@@ -53,6 +54,7 @@ void SwitchTest( void );
 static command_t cmd_table[] =
 {
     { ".TEST", "Run all test modules",          cmd_test },
+    { ".SAMPLE", "SAMPLE TEST",                 sample_test },
     { ".MATH", "Math test: .MATH a b",          cmd_math },
     { ".INFO", "Print build and version info",  cmd_info },
     { ".HELP", "Show help message",             cmd_help },
@@ -157,7 +159,7 @@ static void process_command(char *input)
 
 void SwitchTest( void )
 {
-    int i, runTimes = 0, iRtn = TEST_OK;
+    int i, runTimes = 0;
     for( i = 0; i < 10000; i++ )
     {
         switch( i % 5 )
@@ -178,7 +180,7 @@ void SwitchTest( void )
                 runTimes++;
                 break;
             default:
-                iRtn = TEST_NG;
+                printf("Error in SwitchTest()\n");
                 break;
         }
     }
