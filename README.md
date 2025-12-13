@@ -1,5 +1,3 @@
-
-````markdown
 # Interactive Command-Based Test Application
 
 ## Overview
