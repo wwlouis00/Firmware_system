@@ -46,6 +46,7 @@ static void cmd_math(int argc, char *argv[]);
 static void cmd_info(int argc, char *argv[]);
 static void cmd_help(int argc, char *argv[]);
 static void cmd_exit(int argc, char *argv[]);
+static void linux_test(int argc, char **argv);
 void SwitchTest( void );
 /* -------------------------------------------------------------------------- */
 /*                               Command Table                                 */
@@ -55,6 +56,7 @@ static command_t cmd_table[] =
 {
     { ".TEST", "Run all test modules",          cmd_test },
     { ".SAMPLE", "SAMPLE TEST",                 sample_test },
+    { ".LS", "Linux CMD test",                  linux_test },
     { ".MATH", "Math test: .MATH a b",          cmd_math },
     { ".INFO", "Print build and version info",  cmd_info },
     { ".HELP", "Show help message",             cmd_help },
@@ -87,6 +89,39 @@ static void cmd_test(int argc, char *argv[])
 {
     printf("Executing test_module_name()...\n");
     test_module_name();
+}
+
+static void linux_test(int argc, char **argv)
+{
+   // Default precision for Pi calculation
+    char *precision = "2000"; 
+    char command[256];
+
+    // If user provides an argument (e.g., .LS 5000), use it as precision
+    if (argc > 1) {
+        precision = argv[1];
+    }
+
+    printf("\n--- Linux Performance & Environment Test ---\n");
+    printf("[1/2] 正在執行目錄清單 (ls -l)...\n");
+    system("ls -l");
+
+    printf("\n[2/2] 正在執行浮點數運算壓力測試 (計算 Pi 到 %s 位)...\n", precision);
+    printf("這可能需要幾秒鐘，請稍候...\n");
+
+    // Construct the bc command string
+    // scale: 小數點位數, 4*a(1): 使用反正切函數計算 Pi
+    snprintf(command, sizeof(command), "time echo \"scale=%s; 4*a(1)\" | bc -l > /dev/null", precision);
+
+    // Execute the command
+    int status = system(command);
+
+    if (status == -1) {
+        printf("\n[Error] 指令執行失敗，請檢查是否安裝 'bc' 套件。\n");
+    } else {
+        printf("\n[Success] 測試完成！回傳狀態碼: %d\n", status);
+        printf("提示: 如果計算時間極短，可以嘗試輸入更高位數，例如: .LS 5000\n");
+    }
 }
 
 static void cmd_math(int argc, char *argv[])
@@ -192,13 +227,11 @@ void SwitchTest( void )
 
 int main(void)
 {
-    
-
     printf("\n[BUILD INFO] %s %s\n", __DATE__, __TIME__);
-    printf("[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
+    printf("\n[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
 
     printf("\n=== Command Test System Ready ===\n");
-    printf("Type .HELP for available commands.\n");
+    printf("\nType .HELP for available commands.\n");
 
 #if EMBEDDED_TEST
     char input_buf[MAX_CMD_LEN];
