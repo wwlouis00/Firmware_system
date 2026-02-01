@@ -94,34 +94,15 @@ static void cmd_test(int argc, char *argv[])
 static void linux_test(int argc, char **argv)
 {
    // Default precision for Pi calculation
-    char *precision = "2000"; 
-    char command[256];
+    printf("\n--- Linux Environment Test ---\n");
 
-    // If user provides an argument (e.g., .LS 5000), use it as precision
-    if (argc > 1) {
-        precision = argv[1];
-    }
+    printf("[1/2] 列出目錄檔案 (ls):\n");
+    system("ls -lh");
 
-    printf("\n--- Linux Performance & Environment Test ---\n");
-    printf("[1/2] 正在執行目錄清單 (ls -l)...\n");
-    system("ls -l");
+    printf("\n[2/2] 顯示系統核心版本 (uname):\n");
+    system("uname -a");
 
-    printf("\n[2/2] 正在執行浮點數運算壓力測試 (計算 Pi 到 %s 位)...\n", precision);
-    printf("這可能需要幾秒鐘，請稍候...\n");
-
-    // Construct the bc command string
-    // scale: 小數點位數, 4*a(1): 使用反正切函數計算 Pi
-    snprintf(command, sizeof(command), "time echo \"scale=%s; 4*a(1)\" | bc -l > /dev/null", precision);
-
-    // Execute the command
-    int status = system(command);
-
-    if (status == -1) {
-        printf("\n[Error] 指令執行失敗，請檢查是否安裝 'bc' 套件。\n");
-    } else {
-        printf("\n[Success] 測試完成！回傳狀態碼: %d\n", status);
-        printf("提示: 如果計算時間極短，可以嘗試輸入更高位數，例如: .LS 5000\n");
-    }
+    printf("\n測試完成！\n");
 }
 
 static void cmd_math(int argc, char *argv[])
