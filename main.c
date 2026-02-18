@@ -1,7 +1,7 @@
 /**
  * @file      main.c
  * @author    Louis Wang
- * @date      2025-11-21
+ * @date      2026-02-18
  * @brief     Interactive command-based test application.
  */
 
@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+
 #include "math_utils.h"
 #include "sample.h"
 #include "version.h"
@@ -42,7 +44,7 @@ typedef struct {
 /* -------------------------------------------------------------------------- */
 
 static void cmd_test(int argc, char *argv[]);
-static void cmd_math(int argc, char *argv[]);
+void cmd_math(int argc, char *argv[]);
 static void cmd_info(int argc, char *argv[]);
 static void cmd_help(int argc, char *argv[]);
 static void cmd_exit(int argc, char *argv[]);
@@ -51,6 +53,18 @@ void SwitchTest( void );
 /* -------------------------------------------------------------------------- */
 /*                               Command Table                                 */
 /* -------------------------------------------------------------------------- */
+
+typedef enum CMD_INDEX {
+    CMD_NONE = 0,
+    CMD_TEST,
+    CMD_SAMPLE,
+    CMD_LS,
+    CMD_MATH,
+    CMD_INFO,
+    CMD_HELP,
+    CMD_EXIT,
+} cmd_index_t;
+
 
 static command_t cmd_table[] =
 {
@@ -105,19 +119,19 @@ static void linux_test(int argc, char **argv)
     printf("\n測試完成！\n");
 }
 
-static void cmd_math(int argc, char *argv[])
-{
-    if (argc < 3) {
-        printf("Usage: .MATH a b\n");
-        return;
-    }
+// static void cmd_math(int argc, char *argv[])
+// {
+//     if (argc < 3) {
+//         printf("Usage: .MATH a b\n");
+//         return;
+//     }
 
-    int a = atoi(argv[1]);
-    int b = atoi(argv[2]);
+//     int a = atoi(argv[1]);
+//     int b = atoi(argv[2]);
 
-    printf("add(%d, %d) = %d\n",      a, b, add(a, b));
-    printf("multiply(%d, %d) = %d\n", a, b, multiply(a, b));
-}
+//     printf("add(%d, %d) = %d\n",      a, b, add(a, b));
+//     printf("multiply(%d, %d) = %d\n", a, b, multiply(a, b));
+// }
 
 static void cmd_info(int argc, char *argv[])
 {
