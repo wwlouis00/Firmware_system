@@ -44,7 +44,6 @@ typedef struct {
 /* -------------------------------------------------------------------------- */
 
 static void cmd_test(int argc, char *argv[]);
-void cmd_math(int argc, char *argv[]);
 static void cmd_info(int argc, char *argv[]);
 static void cmd_help(int argc, char *argv[]);
 static void cmd_exit(int argc, char *argv[]);
@@ -54,7 +53,7 @@ void SwitchTest( void );
 /*                               Command Table                                 */
 /* -------------------------------------------------------------------------- */
 
-typedef enum CMD_INDEX {
+typedef enum _CMD_ITEMS {
     CMD_NONE = 0,
     CMD_TEST,
     CMD_SAMPLE,
@@ -63,8 +62,13 @@ typedef enum CMD_INDEX {
     CMD_INFO,
     CMD_HELP,
     CMD_EXIT,
-} cmd_index_t;
+} CMD_ITEMS;
 
+
+/*-----------------------------------------------------------------------------*/
+/* Local Function Protype                                                      */
+/*-----------------------------------------------------------------------------*/
+int  iChooseItem( int *runTimes );
 
 static command_t cmd_table[] =
 {
@@ -83,17 +87,6 @@ static const int cmd_count = sizeof(cmd_table) / sizeof(cmd_table[0]);
 /*                              Test Functions                                 */
 /* -------------------------------------------------------------------------- */
 
-// static void test_module_name(void)
-// {
-//     const int expected = 5;
-//     int result = add(2, 3);
-
-//     if (result == expected) {
-//         printf("[PASS] add(2, 3) == %d\n", expected);
-//     } else {
-//         printf("[FAIL] add(2, 3) expected %d but got %d\n", expected, result);
-//     }
-// }
 
 /* -------------------------------------------------------------------------- */
 /*                             Command Handlers                                */
@@ -101,8 +94,6 @@ static const int cmd_count = sizeof(cmd_table) / sizeof(cmd_table[0]);
 
 static void cmd_test(int argc, char *argv[])
 {
-    // printf("Executing test_module_name()...\n");
-    // test_module_name();
     printf("Hello world!\n");
 }
 
@@ -176,31 +167,35 @@ static void process_command(char *input)
 
 void SwitchTest( void )
 {
-    int i, runTimes = 0;
-    for( i = 0; i < 10000; i++ )
-    {
-        switch( i % 5 )
-        {
-            case 0:
-                runTimes++;
-                break;
-            case 1:
-                runTimes++;
-                break;
-            case 2:
-                runTimes++;
-                break;
-            case 3:
-                runTimes++;
-                break;
-            case 4:
-                runTimes++;
-                break;
-            default:
-                printf("Error in SwitchTest()\n");
-                break;
-        }
-    }
+    // int i, runTimes = 0; 
+    // int result = TEST_OK;
+
+    // CMD_ITEMS *MainItem;
+    // CMD_ITEMS TestItem;
+    // for( i = 0; i < 10000; i++ )
+    // {
+    //     switch( i % 5 )
+    //     {
+    //         case 0:
+    //             runTimes++;
+    //             break;
+    //         case 1:
+    //             runTimes++;
+    //             break;
+    //         case 2:
+    //             runTimes++;
+    //             break;
+    //         case 3:
+    //             runTimes++;
+    //             break;
+    //         case 4:
+    //             runTimes++;
+    //             break;
+    //         default:
+    //             printf("Error in SwitchTest()\n");
+    //             break;
+    //     }
+    // }
 }
 
 /* -------------------------------------------------------------------------- */
