@@ -83,7 +83,7 @@ $(TARGET): $(OBJS)
 # ------------------------------------------------------------
 clean:
 	@echo "Cleaning up $(PLATFORM) objects and binaries..."
-	$(RM) $(OBJS) $(TARGET_BASE)_ubuntu $(TARGET_BASE)_rpi
+	$(RM) $(OBJS)
 
 # ------------------------------------------------------------
 # 使用說明

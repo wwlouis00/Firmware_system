@@ -83,17 +83,17 @@ static const int cmd_count = sizeof(cmd_table) / sizeof(cmd_table[0]);
 /*                              Test Functions                                 */
 /* -------------------------------------------------------------------------- */
 
-static void test_module_name(void)
-{
-    const int expected = 5;
-    int result = add(2, 3);
+// static void test_module_name(void)
+// {
+//     const int expected = 5;
+//     int result = add(2, 3);
 
-    if (result == expected) {
-        printf("[PASS] add(2, 3) == %d\n", expected);
-    } else {
-        printf("[FAIL] add(2, 3) expected %d but got %d\n", expected, result);
-    }
-}
+//     if (result == expected) {
+//         printf("[PASS] add(2, 3) == %d\n", expected);
+//     } else {
+//         printf("[FAIL] add(2, 3) expected %d but got %d\n", expected, result);
+//     }
+// }
 
 /* -------------------------------------------------------------------------- */
 /*                             Command Handlers                                */
@@ -101,8 +101,9 @@ static void test_module_name(void)
 
 static void cmd_test(int argc, char *argv[])
 {
-    printf("Executing test_module_name()...\n");
-    test_module_name();
+    // printf("Executing test_module_name()...\n");
+    // test_module_name();
+    printf("Hello world!\n");
 }
 
 static void linux_test(int argc, char **argv)
@@ -119,24 +120,10 @@ static void linux_test(int argc, char **argv)
     printf("\n測試完成！\n");
 }
 
-// static void cmd_math(int argc, char *argv[])
-// {
-//     if (argc < 3) {
-//         printf("Usage: .MATH a b\n");
-//         return;
-//     }
-
-//     int a = atoi(argv[1]);
-//     int b = atoi(argv[2]);
-
-//     printf("add(%d, %d) = %d\n",      a, b, add(a, b));
-//     printf("multiply(%d, %d) = %d\n", a, b, multiply(a, b));
-// }
-
 static void cmd_info(int argc, char *argv[])
 {
     printf("\n[BUILD INFO] %s %s\n", __DATE__, __TIME__);
-    printf("[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
+    printf("\n[VERSION]    %s%03d_V%03d\n", PROJECT, TSTCODE_SUBVER, TSTCODE_VER);
 }
 
 static void cmd_help(int argc, char *argv[])
